@@ -23,15 +23,19 @@ The configuration of ``monnet`` is handled via a set of environment variables th
 
 The commands used to run the scrapers in ``monnet`` are encapsulated in the included ``Makefile``, so a basic installation and usage would look like this:
 
-    $ virtualenv env
-    $ source env/bin/activate
-    $ pip install -r requirements.txt
-    $ python setup.py develop
+```bash
+$ virtualenv env
+$ source env/bin/activate
+$ pip install -r requirements.txt
+$ python setup.py develop
+```
 
 This concludes the installation, after setting the environment variables given above and making sure the database exists, you can run the scrapers:
 
-    $ make
-    # more specific:
-    $ make ted
+```bash
+$ make
+# more specific:
+$ make ted
+```
 
 For more details on the available targets, read the ``Makefile``.
