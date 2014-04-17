@@ -1,11 +1,11 @@
-if [ -z "$OPINT_DATA_PATH" ]; then
-    echo "Need to set OPINT_DATA_PATH"
+if [ -z "$MONNET_DATA_PATH" ]; then
+    echo "Need to set MONNET_DATA_PATH"
     exit 1
 fi
 
 echo "WARNING: This scripts needs 'sudo' to continue..."
 
-export TED_PATH="$OPINT_DATA_PATH/ted"
+export TED_PATH="$MONNET_DATA_PATH/ted"
 cd $TED_PATH
 
 #python make_list.py
