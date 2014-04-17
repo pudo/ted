@@ -9,7 +9,7 @@ export TED_PATH="$MONNET_DATA_PATH/ted"
 cd $TED_PATH
 
 #python make_list.py
-wget -c -P $TED_PATH/isos -i cd $TED_PATH/iso_list.txt
+wget -c -P $TED_PATH/isos -i $TED_PATH/iso_list.txt
 
 mkdir -p mnt
 mkdir -p xml
