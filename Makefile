@@ -55,7 +55,10 @@ ted-isos: ted-iso-list
 ted-countries:
 	python monnet/ted/countries.py
 
-ted: ted-download ted-parse ted-countries
+ted-cleanup:
+	python monnet/ted/cleanup.py
+
+ted: ted-download ted-parse ted-countries ted-cleanup
 
 
 ####################################################
