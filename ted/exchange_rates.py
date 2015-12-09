@@ -2,7 +2,7 @@ import os
 import requests
 import json
 
-from ted.common import engine
+from ted.util import engine
 
 URL = 'http://openexchangerates.org/api/historical/%s.json'
 APPID = 'f4999cad9a23487eb5eaae4448309134'

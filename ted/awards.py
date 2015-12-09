@@ -1,6 +1,6 @@
 import logging
 from pprint import pprint  # noqa
-from slugify import slugify
+from normality import slugify
 
 from ted.util import Extractor
 from ted.exchange_rates import convert_currency

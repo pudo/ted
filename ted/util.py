@@ -5,8 +5,6 @@ from lxml import etree
 from pprint import pprint
 from sqlalchemy import select, and_
 
-# from monnet.util import walk_path
-
 import requests.packages.urllib3
 
 requests.packages.urllib3.disable_warnings()
@@ -27,14 +25,6 @@ documents_table = engine['eu_ted_documents']
 contracts_table = engine['eu_ted_contracts']
 references_table = engine['eu_ted_references']
 cpvs_table = engine['eu_ted_cpvs']
-
-
-def ted_documents():
-    for file_name in walk_path('ted/xml/'):
-        if not file_name.endswith('.xml'):
-            continue
-        with open(file_name, 'r') as fh:
-            yield file_name, fh.read()
 
 
 def ted_contracts():
@@ -112,7 +102,6 @@ class Extractor(object):
         return el.get(attr)
 
     def audit(self):
-        #print "UNPARSED:"
         for k, v in sorted(self.paths.items()):
             if k in self._ignore:
                 continue
