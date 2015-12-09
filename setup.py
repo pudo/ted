@@ -1,16 +1,15 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='monnet',
+    name='ted',
     version='0.1',
-    description="A set of scrapers for data from the European Union.",
+    description="A scraper for EU Tenders Electronic Daily.",
     long_description='',
-    classifiers=[
-        ],
+    classifiers=[],
     keywords='',
     author='',
     author_email='friedrich@pudo.org',
-    url='http://openinterests.eu',
+    url='http://ted.openspending.org',
     license='MIT',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     namespace_packages=[],
@@ -19,6 +18,5 @@ setup(
     install_requires=[
     ],
     tests_require=[],
-    entry_points=\
-    """ """,
+    entry_points=""" """,
 )
