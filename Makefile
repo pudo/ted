@@ -2,10 +2,10 @@
 all: parse countries cleanup
 
 parse:
-	python monnet/ted/parse.py
+	python ted/parse.py
 
 countries:
-	python monnet/ted/countries.py
+	python ted/countries.py
 
 cleanup:
-	python monnet/ted/cleanup.py
+	python ted/cleanup.py
