@@ -1,14 +1,32 @@
+import os
+import logging
+import dataset
 from lxml import etree
-from glob import iglob
 from pprint import pprint
-from sqlalchemy import func, select, and_
+from sqlalchemy import select, and_
 
-from monnet.util import engine, walk_path
+# from monnet.util import walk_path
 
-documents_table = engine['ted_documents']
-contracts_table = engine['ted_contracts']
-references_table = engine['ted_references']
-cpvs_table = engine['ted_cpvs']
+import requests.packages.urllib3
+
+requests.packages.urllib3.disable_warnings()
+logging.basicConfig(level=logging.INFO)
+logging.getLogger('requests').setLevel(logging.WARNING)
+logging.getLogger('alembic').setLevel(logging.WARNING)
+
+
+DATABASE_URI = os.environ.get('DATABASE_URI')
+assert DATABASE_URI, "No database URI defined in DATABASE_URI."
+
+DATA_PATH = os.environ.get('DATA_PATH')
+assert DATA_PATH, "No data path defined in DATA_PATH."
+
+
+engine = dataset.connect(DATABASE_URI)
+documents_table = engine['eu_ted_documents']
+contracts_table = engine['eu_ted_contracts']
+references_table = engine['eu_ted_references']
+cpvs_table = engine['eu_ted_cpvs']
 
 
 def ted_documents():
@@ -24,7 +42,6 @@ def ted_contracts():
     document_alias = documents_table.table.alias('document')
     _tables = [contract_alias, document_alias]
     _filters = and_(contract_alias.c.doc_no == document_alias.c.doc_no)
-
 
     q = select(_tables, _filters, _tables, use_labels=True,
                order_by=[document_alias.c.doc_no.desc()])
@@ -52,7 +69,7 @@ class Extractor(object):
                 self.generate(child)
         else:
             name = self.element_name(el)
-            if not name in self.paths:
+            if name not in self.paths:
                 self.paths[name] = el
 
     def ignore(self, path):
@@ -105,5 +122,3 @@ class Extractor(object):
                     'text': v.text,
                     'attr': v.attrib
                 })
-
-

@@ -2,7 +2,7 @@ import requests
 import logging
 import os
 from lxml import html
-from pprint import pprint
+from pprint import pprint  # noqa
 import tarfile
 
 from monnet.util.cache import ensure_path

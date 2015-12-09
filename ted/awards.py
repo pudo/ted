@@ -1,83 +1,85 @@
-from pprint import pprint
+import logging
+from pprint import pprint  # noqa
 from slugify import slugify
 
-from monnet.ted.util import Extractor
-from monnet.util.exchange_rates import convert_currency
+from ted.util import Extractor
+from ted.exchange_rates import convert_currency
+
+log = logging.getLogger(__name__)
 
 
 LOOKUP = {
-        'appeal_body': {
-            'std': './/PROCEDURES_FOR_APPEAL/APPEAL_PROCEDURE_BODY_RESPONSIBLE//',
-            'util': './/APPEAL_PROCEDURES/RESPONSIBLE_FOR_APPEAL_PROCEDURES//',
-            'mil': './/PROCEDURES_FOR_APPEAL/APPEAL_PROCEDURE_BODY_RESPONSIBLE//'
-        },
-        'authority': {
-            'std': './/CONTRACTING_AUTHORITY_INFORMATION_CONTRACT_AWARD/NAME_ADDRESSES_CONTACT_CONTRACT_AWARD//',
-            'util': './/NAME_ADDRESSES_CONTACT_CONTRACT_AWARD_UTILITIES/CA_CE_CONCESSIONAIRE_PROFILE//',
-            'mil': './/CONTRACTING_AUTHORITY_INFORMATION_CONTRACT_AWARD_DEFENCE//CA_CE_CONCESSIONAIRE_PROFILE//',
-        },
-        'award_dest': {
-            'std': './/AWARD_OF_CONTRACT',
-            'util': './FD_CONTRACT_AWARD_UTILITIES/AWARD_CONTRACT_CONTRACT_AWARD_UTILITIES',
-            'mil': './/AWARD_OF_CONTRACT_DEFENCE'
-        },
-        'total_value': {
-            'std': './/TOTAL_FINAL_VALUE/COSTS_RANGE_AND_CURRENCY_WITH_VAT_RATE',
-            'util': './/OBJECT_CONTRACT_AWARD_UTILITIES/COSTS_RANGE_AND_CURRENCY_WITH_VAT_RATE',
-            'mil': './/TOTAL_FINAL_VALUE/COSTS_RANGE_AND_CURRENCY_WITH_VAT_RATE'
-        },
-        'award_description': {
-            'std': './/DESCRIPTION_AWARD_NOTICE_INFORMATION',
-            'util': './/OBJECT_CONTRACT_AWARD_UTILITIES/DESCRIPTION_CONTRACT_AWARD_UTILITIES',
-            'mil': './/DESCRIPTION_AWARD_NOTICE_INFORMATION_DEFENCE'
-        },
-        'short_desc': {
-            'std': './/DESCRIPTION_AWARD_NOTICE_INFORMATION/SHORT_CONTRACT_DESCRIPTION/P',
-            'util': './/DESCRIPTION_CONTRACT_AWARD_UTILITIES/SHORT_DESCRIPTION/P',
-            'mil': './/DESCRIPTION_AWARD_NOTICE_INFORMATION_DEFENCE/SHORT_CONTRACT_DESCRIPTION/P'
-        },
-        'reference': {
-            'std': './/ADMINISTRATIVE_INFORMATION_CONTRACT_AWARD/FILE_REFERENCE_NUMBER/P',
-            'util': './/ADMINISTRATIVE_INFO_CONTRACT_AWARD_UTILITIES/REFERENCE_NUMBER_ATTRIBUTED/P',
-            'mil': './/ADMINISTRATIVE_INFORMATION_CONTRACT_AWARD_DEFENCE/FILE_REFERENCE_NUMBER/P'
-        },
-        'additional_info': {
-            'std': './/COMPLEMENTARY_INFORMATION_CONTRACT_AWARD/ADDITIONAL_INFORMATION/P',
-            'util': './/COMPLEMENTARY_INFORMATION_CONTRACT_AWARD_UTILITIES/ADDITIONAL_INFORMATION/P',
-            'mil': './/COMPLEMENTARY_INFORMATION_CONTRACT_AWARD/ADDITIONAL_INFORMATION/P'
-        },
-        'electronic_auction': {
-            'std': './/F03_IS_ELECTRONIC_AUCTION_USABLE',
-            'util': './/F06_IS_ELECTRONIC_AUCTION_USABLE',
-            'mil': './/F18_IS_ELECTRONIC_AUCTION_USABLE'
-        },
-        'activity_type': {
-            'std': './/TYPE_AND_ACTIVITIES_AND_PURCHASING_ON_BEHALF//TYPE_OF_ACTIVITY',
-            'util': './/NOPATH',
-            'mil': './/TYPE_AND_ACTIVITIES_OR_CONTRACTING_ENTITY_AND_PURCHASING_ON_BEHALF//TYPE_OF_ACTIVITY'
-        },
-        'activity_type_other': {
-            'std': './/TYPE_AND_ACTIVITIES_AND_PURCHASING_ON_BEHALF//TYPE_OF_ACTIVITY_OTHER',
-            'util': './/NOPATH',
-            'mil': './/TYPE_AND_ACTIVITIES_OR_CONTRACTING_ENTITY_AND_PURCHASING_ON_BEHALF//TYPE_OF_ACTIVITY_OTHER'
-        },
-        'authority_type': {
-            'std': './/TYPE_AND_ACTIVITIES_AND_PURCHASING_ON_BEHALF//TYPE_OF_CONTRACTING_AUTHORITY',
-            'util': './/NOPATH',
-            'mil': './/TYPE_AND_ACTIVITIES_OR_CONTRACTING_ENTITY_AND_PURCHASING_ON_BEHALF//TYPE_OF_CONTRACTING_AUTHORITY'
-        },
-        'authority_type_other': {
-            'std': './/TYPE_AND_ACTIVITIES_AND_PURCHASING_ON_BEHALF//TYPE_AND_ACTIVITIES/TYPE_OF_CONTRACTING_AUTHORITY_OTHER',
-            'util': './/NOPATH',
-            'mil': './/TYPE_AND_ACTIVITIES_OR_CONTRACTING_ENTITY_AND_PURCHASING_ON_BEHALF/TYPE_AND_ACTIVITIES/TYPE_OF_CONTRACTING_AUTHORITY_OTHER'
-        },
-        'operator': {
-            'std': './ECONOMIC_OPERATOR_NAME_ADDRESS//',
-            'util': './/',
-            'mil': './ECONOMIC_OPERATOR_NAME_ADDRESS//'
-        },
+    'appeal_body': {
+        'std': './/PROCEDURES_FOR_APPEAL/APPEAL_PROCEDURE_BODY_RESPONSIBLE//',
+        'util': './/APPEAL_PROCEDURES/RESPONSIBLE_FOR_APPEAL_PROCEDURES//',
+        'mil': './/PROCEDURES_FOR_APPEAL/APPEAL_PROCEDURE_BODY_RESPONSIBLE//'
+    },
+    'authority': {
+        'std': './/CONTRACTING_AUTHORITY_INFORMATION_CONTRACT_AWARD/NAME_ADDRESSES_CONTACT_CONTRACT_AWARD//',
+        'util': './/NAME_ADDRESSES_CONTACT_CONTRACT_AWARD_UTILITIES/CA_CE_CONCESSIONAIRE_PROFILE//',
+        'mil': './/CONTRACTING_AUTHORITY_INFORMATION_CONTRACT_AWARD_DEFENCE//CA_CE_CONCESSIONAIRE_PROFILE//',
+    },
+    'award_dest': {
+        'std': './/AWARD_OF_CONTRACT',
+        'util': './FD_CONTRACT_AWARD_UTILITIES/AWARD_CONTRACT_CONTRACT_AWARD_UTILITIES',
+        'mil': './/AWARD_OF_CONTRACT_DEFENCE'
+    },
+    'total_value': {
+        'std': './/TOTAL_FINAL_VALUE/COSTS_RANGE_AND_CURRENCY_WITH_VAT_RATE',
+        'util': './/OBJECT_CONTRACT_AWARD_UTILITIES/COSTS_RANGE_AND_CURRENCY_WITH_VAT_RATE',
+        'mil': './/TOTAL_FINAL_VALUE/COSTS_RANGE_AND_CURRENCY_WITH_VAT_RATE'
+    },
+    'award_description': {
+        'std': './/DESCRIPTION_AWARD_NOTICE_INFORMATION',
+        'util': './/OBJECT_CONTRACT_AWARD_UTILITIES/DESCRIPTION_CONTRACT_AWARD_UTILITIES',
+        'mil': './/DESCRIPTION_AWARD_NOTICE_INFORMATION_DEFENCE'
+    },
+    'short_desc': {
+        'std': './/DESCRIPTION_AWARD_NOTICE_INFORMATION/SHORT_CONTRACT_DESCRIPTION/P',
+        'util': './/DESCRIPTION_CONTRACT_AWARD_UTILITIES/SHORT_DESCRIPTION/P',
+        'mil': './/DESCRIPTION_AWARD_NOTICE_INFORMATION_DEFENCE/SHORT_CONTRACT_DESCRIPTION/P'
+    },
+    'reference': {
+        'std': './/ADMINISTRATIVE_INFORMATION_CONTRACT_AWARD/FILE_REFERENCE_NUMBER/P',
+        'util': './/ADMINISTRATIVE_INFO_CONTRACT_AWARD_UTILITIES/REFERENCE_NUMBER_ATTRIBUTED/P',
+        'mil': './/ADMINISTRATIVE_INFORMATION_CONTRACT_AWARD_DEFENCE/FILE_REFERENCE_NUMBER/P'
+    },
+    'additional_info': {
+        'std': './/COMPLEMENTARY_INFORMATION_CONTRACT_AWARD/ADDITIONAL_INFORMATION/P',
+        'util': './/COMPLEMENTARY_INFORMATION_CONTRACT_AWARD_UTILITIES/ADDITIONAL_INFORMATION/P',
+        'mil': './/COMPLEMENTARY_INFORMATION_CONTRACT_AWARD/ADDITIONAL_INFORMATION/P'
+    },
+    'electronic_auction': {
+        'std': './/F03_IS_ELECTRONIC_AUCTION_USABLE',
+        'util': './/F06_IS_ELECTRONIC_AUCTION_USABLE',
+        'mil': './/F18_IS_ELECTRONIC_AUCTION_USABLE'
+    },
+    'activity_type': {
+        'std': './/TYPE_AND_ACTIVITIES_AND_PURCHASING_ON_BEHALF//TYPE_OF_ACTIVITY',
+        'util': './/NOPATH',
+        'mil': './/TYPE_AND_ACTIVITIES_OR_CONTRACTING_ENTITY_AND_PURCHASING_ON_BEHALF//TYPE_OF_ACTIVITY'
+    },
+    'activity_type_other': {
+        'std': './/TYPE_AND_ACTIVITIES_AND_PURCHASING_ON_BEHALF//TYPE_OF_ACTIVITY_OTHER',
+        'util': './/NOPATH',
+        'mil': './/TYPE_AND_ACTIVITIES_OR_CONTRACTING_ENTITY_AND_PURCHASING_ON_BEHALF//TYPE_OF_ACTIVITY_OTHER'
+    },
+    'authority_type': {
+        'std': './/TYPE_AND_ACTIVITIES_AND_PURCHASING_ON_BEHALF//TYPE_OF_CONTRACTING_AUTHORITY',
+        'util': './/NOPATH',
+        'mil': './/TYPE_AND_ACTIVITIES_OR_CONTRACTING_ENTITY_AND_PURCHASING_ON_BEHALF//TYPE_OF_CONTRACTING_AUTHORITY'
+    },
+    'authority_type_other': {
+        'std': './/TYPE_AND_ACTIVITIES_AND_PURCHASING_ON_BEHALF//TYPE_AND_ACTIVITIES/TYPE_OF_CONTRACTING_AUTHORITY_OTHER',
+        'util': './/NOPATH',
+        'mil': './/TYPE_AND_ACTIVITIES_OR_CONTRACTING_ENTITY_AND_PURCHASING_ON_BEHALF/TYPE_AND_ACTIVITIES/TYPE_OF_CONTRACTING_AUTHORITY_OTHER'
+    },
+    'operator': {
+        'std': './ECONOMIC_OPERATOR_NAME_ADDRESS//',
+        'util': './/',
+        'mil': './ECONOMIC_OPERATOR_NAME_ADDRESS//'
     }
-
+}
 
 
 def _lookup(s, key):
@@ -245,5 +247,5 @@ def parse_form(root):
         contract = parse_award(award, lookup, conversion_date)
         contract.update(form)
         contracts.append(contract)
-        #pprint(contract)
+        # pprint(contract)
     return contracts

@@ -1,14 +1,14 @@
 import logging
 from lxml import etree
-from pprint import pprint
-from collections import defaultdict
-#from slugify import slugify
+from pprint import pprint  # noqa
+# from collections import defaultdict
+# from slugify import slugify
 
-from monnet.ted.util import ted_documents, Extractor
-from monnet.ted.util import engine, documents_table, contracts_table, cpvs_table, references_table
-from monnet.ted.awards import parse_form
+from ted.util import ted_documents, Extractor, documents_table
+from ted.util import contracts_table, cpvs_table, references_table
+from ted.awards import parse_form
 
-log = logging.getLogger('monnet.ted.parse')
+log = logging.getLogger(__name__)
 
 
 def select_form(form, lang):

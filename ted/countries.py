@@ -1,11 +1,15 @@
 import logging
-import requests
+# import requests
 
-from monnet.util import country_by_name
-from monnet.ted.util import engine, contracts_table, documents_table
+from ted.util import contracts_table, documents_table
 
 
-log = logging.getLogger('monnet.ted.countries')
+log = logging.getLogger(__name__)
+
+
+def country_by_name(name):
+    # TODO after monnet extract
+    return
 
 
 def transform_prefix(prefix):
@@ -28,7 +32,6 @@ def transform():
         name, code = country_by_name(row.get(field))
         if code is not None:
             row['country_common'] = name
-            #row['country_code'] = code
             documents_table.update(row, [field])
 
 
