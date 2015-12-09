@@ -6,5 +6,5 @@ RUN apt-get install -y gdal-bin python-gdal
 COPY . /scraper
 WORKDIR /scraper
 RUN pip install -r requirements.txt
-RUN pip install -e
+RUN pip install -e .
 CMD sh run.sh
