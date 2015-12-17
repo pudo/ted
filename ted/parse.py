@@ -28,10 +28,12 @@ def select_form(form, lang):
 
 
 def parse(filename, file_content):
-    #fh = open(filename, 'rb')
+    # fh = open(filename, 'rb')
+
     xmldata = file_content.replace('xmlns="', 'xmlns_="')
-    #fh.close()
-    #print xmldata.decode('utf-8').encode('ascii', 'replace')
+    # fh.close()
+    # print xmldata.decode('utf-8').encode('ascii', 'replace')
+
     root = etree.fromstring(xmldata)
     form = root.find('.//FORM_SECTION')
     form.getparent().remove(form)
@@ -110,12 +112,6 @@ def parse(filename, file_content):
     ext.ignore('./TRANSLATION_SECTION/TRANSLITERATIONS/TRANSLITERATED_ADDR/ADDRESS')
     ext.audit()
 
-    form_ = select_form(form, data['orig_language'])
-    contracts = []
-    #print form_
-    if form_.tag.startswith('CONTRACT_AWARD'):
-        contracts = parse_form(form_)
-
     # save to DB
     doc_no = data['doc_no']
 
@@ -123,7 +119,13 @@ def parse(filename, file_content):
         log.info('Skipping: %s', doc_no)
         return
 
-    #engine.begin()
+    form_ = select_form(form, data['orig_language'])
+    contracts = []
+    # print form_
+    if form_.tag.startswith('CONTRACT_AWARD'):
+        contracts = parse_form(form_)
+
+    # engine.begin()
     log.info('Parsed: %s, %s (%s)', doc_no, form_.tag, len(contracts))
     cpvs_table.delete(doc_no=doc_no)
     references_table.delete(doc_no=doc_no)
@@ -141,18 +143,21 @@ def parse(filename, file_content):
     for i, contract in enumerate(contracts):
         contract['doc_no'] = doc_no
         contract['index'] = i
-        #contract['slug'] = slugify('%s-c%s' % (contract['doc_no'], contract['index']))
+        # contract['slug'] = slugify('%s-c%s' % (contract['doc_no'], contract['index']))
         contracts_table.insert(contract)
 
-    #data['slug'] = slugify(doc_no)
+    # data['slug'] = slugify(doc_no)
     documents_table.insert(data)
-    #engine.commit()
-    #pprint(data)
+    # engine.commit()
+    # pprint(data)
 
 
 def parse_all():
     for file_name, file_content in ted_documents():
-        parse(file_name, file_content)
+        try:
+            parse(file_name, file_content)
+        except Exception, e:
+            log.exception(e)
 
 if __name__ == '__main__':
     parse_all()
