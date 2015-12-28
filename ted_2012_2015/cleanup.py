@@ -2,7 +2,7 @@ import logging
 # import requests
 
 from sqlalchemy import Unicode
-from ted.util import engine, documents_table
+from ted_2012_2015.util import engine, documents_table
 
 
 log = logging.getLogger(__name__)

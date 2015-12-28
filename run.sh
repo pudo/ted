@@ -10,4 +10,4 @@ SOURCE_PATH=$DATA_PATH/sources
 mkdir -p $SOURCE_PATH
 wget -c -t 5 -nc -nH -P $SOURCE_PATH -r -l 5 --cut-dirs 1 --accept .tar.gz $URL
 
-python ted/parse.py
+python ted_2012_2015/parse.py
