@@ -4,10 +4,10 @@ from pprint import pprint  # noqa
 # from collections import defaultdict
 # from slugify import slugify
 
-from ted.util import Extractor, documents_table
-from ted.util import contracts_table, cpvs_table, references_table
-from ted.extract import ted_documents
-from ted.awards import parse_form
+from ted_2012_2015.util import Extractor, documents_table
+from ted_2012_2015.util import contracts_table, cpvs_table, references_table
+from ted_2012_2015.extract import ted_documents
+from ted_2012_2015.awards import parse_form
 
 log = logging.getLogger(__name__)
 

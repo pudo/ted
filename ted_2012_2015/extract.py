@@ -2,7 +2,7 @@ import os
 import logging
 import tarfile
 
-from ted.util import DATA_PATH
+from ted_2012_2015.util import DATA_PATH
 
 log = logging.getLogger(__name__)
 

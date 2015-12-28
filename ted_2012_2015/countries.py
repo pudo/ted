@@ -1,7 +1,7 @@
 import logging
 # import requests
 
-from ted.util import contracts_table, documents_table
+from ted_2012_2015.util import contracts_table, documents_table
 
 
 log = logging.getLogger(__name__)

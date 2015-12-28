@@ -2,8 +2,8 @@ import logging
 from pprint import pprint  # noqa
 from normality import slugify
 
-from ted.util import Extractor
-from ted.exchange_rates import convert_currency
+from ted_2012_2015.util import Extractor
+from ted_2012_2015.exchange_rates import convert_currency
 
 log = logging.getLogger(__name__)
 
