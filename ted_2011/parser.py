@@ -6,14 +6,23 @@ import glob, os, re, csv
 from slugify import slugify
 from datetime import datetime
 
+DATA_PATH = os.environ.get('DATA_PATH')
+assert DATA_PATH, "No data path defined in DATA_PATH."
+
+OUTPUT_PATH = os.path.join(DATA_PATH, 'output', '2011')
+try:
+    os.makedirs(OUTPUT_PATH)
+except:
+    pass
+
 startTime = datetime.now()
 
 #PYTHON: glob module http://stackoverflow.com/questions/18262293/python-open-every-file-in-a-folder
 #VIM: comment multiple lines http://unix.stackexchange.com/questions/120615/how-to-comment-multiple-lines-at-once
 #VIM: comment more lines at the same time http://stackoverflow.com/questions/9549729/in-vim-how-do-i-effectively-insert-the-same-characters-across-multiple-lines
 
-testfile = open("repairkit/tmp.xml").read()
-xmlnum = 0
+# testfile = open("repairkit/tmp.xml").read()
+# xmlnum = 0
 
 # oanda.com http://www.oanda.com/currency/average?amount=1&start_month=1&start_year=2011&end_month=12&end_year=2011&base=EUR&avg_type=Year&Submit=1&exchange=BGN&exchange=CHF&exchange=CYP&exchange=CZK&exchange=DKK&exchange=EEK&exchange=GBP&exchange=HUF&exchange=ISK&exchange=JPY&exchange=LTL&exchange=LVL&exchange=MKD&exchange=MTL&exchange=NOK&exchange=PLN&exchange=RON&exchange=SEK&exchange=SKK&exchange=TRY&exchange=USD&interbank=0&format=CSV
 
@@ -249,21 +258,23 @@ def parse(xmlfile):
     
     return row
 
-#print parse(testfile)
+# print parse(testfile)
 
 ######## get ready.. write!
 ######## use for end xml files in directory alltar
 
-missing = open("TED-contracts-2011/missing_tenders.csv", "w")
+missing_file = os.path.join(OUTPUT_PATH, 'missing_tenders.csv')
+missing = open(missing_file, "w")
 
-for nr in xrange(1,253):
+for nr in xrange(1, 253):
 
     filenr = str(nr).zfill(3)
     print filenr
     lapseTime = datetime.now()
-   
+
 #    initiate csv file and add header
-    outputfile = open("TED-contracts-2011/contracts"+filenr+".csv", "w")
+    output_filename = os.path.join(OUTPUT_PATH, "contracts"+filenr+".csv")
+    outputfile = open(output_filename, "w")
     writer = csv.writer(outputfile)
 
     missingWriter = csv.writer(missing)
@@ -276,7 +287,7 @@ for nr in xrange(1,253):
         filename = open(f).read()
         row = parse(filename)
         
-        if row == None:
+        if row is None:
             continue
         elif 'http' in row[0]:
             print row
